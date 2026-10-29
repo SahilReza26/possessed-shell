@@ -1,6 +1,6 @@
 # 👻 possessed shell
 
-> a terminal that someone else is also using.
+> a terminal that something else is also using.
 
 `possessed` runs your commands like a normal shell. After each one, a **local open-weight model** whispers back about what it just watched you do. It notices when you delete things, force-push, or work at 3 a.m. It **remembers previous nights** and brings them up later.
 
