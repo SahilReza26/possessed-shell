@@ -2,18 +2,27 @@
 
 > a terminal that something else is also using.
 
+[![Watch the demo](https://img.youtube.com/vi/2m84ZO8I-ek/maxresdefault.jpg)](https://youtu.be/2m84ZO8I-ek)
+
 `possessed` runs your commands like a normal shell. After each one, a **local open-weight model** whispers back about what it just watched you do. It notices when you delete things, force-push, or work at 3 a.m. It **remembers previous nights** and brings them up later.
 
 It lives entirely on your machine. No API key, no account, no internet once the model is pulled.
 
+Real whispers from Qwen 2.5 3B on my laptop:
+
 ```
-sahil@laptop:~/projects/kibo † rm -rf build/
+sahil@Sahil:~\Downloads\hacktober_week_4 † del bones.txt
 
-  you threw build away like it meant nothing. i was still inside it.
+  bones.txt is gone now. a fleeting moment in the shadows.
 
-sahil@laptop:~/projects/kibo † git push --force
+sahil@Sahil:~\Downloads\hacktober_week_4 † cd c:\nowhere
+cd: The system cannot find the file specified: c:\nowhere
 
-  you rewrote history again. last tuesday you did the same. i remember what it used to say.
+  you seek, but C:\nowhere is a phantom.
+
+sahil@Sahil:~\Downloads\hacktober_week_4 † exit
+
+  i'll remain as always, watching shadows dance on walls.
 ```
 
 ## Who it is
@@ -66,15 +75,17 @@ you type ─▶ subprocess (your real shell) ─▶ output streams to you live
                                          └▶ last 40 lines kept
              omen detector (rm, sudo, force-push, failures, 3 a.m.…)
              secret redaction (tokens, passwords, API keys)
+             focus picker (ONE concrete detail: the error line, the deleted file, the time)
              context: command · exit code · output tail · cwd · time
                       last 5 commands · 1 random memory from past nights
                           ▼
-             Ollama /api/chat (streaming) ─▶ typed out slowly, with glitches
+             Ollama /api/chat (streaming, few-shot examples) ─▶ typed out slowly, with glitches
              omens saved to ~/.possessed_shell/memory.json
 ```
 
 - **Shell.** Every command runs in your real shell through `subprocess`. Output streams live while the tail is captured. `cd` is handled in-process so the directory persists.
 - **Omens.** Regex triggers for destructive or suspicious commands, failures, Ctrl+C, and the witching hours (00:00–04:00). An omen always gets a reaction and is written to memory.
+- **Specific, not vague.** Small models ignore "be specific" rules but copy examples. So each request includes four example whispers, plus one concrete detail picked by code for the ghost to react to.
 - **Memory.** On startup the ghost greets you with recollections, e.g. "3 nights ago they ran `rm -rf node_modules`". Mid-session, memories surface at random.
 - **Privacy.** Secrets are redacted before anything reaches the model *or* the memory file, even though both are local.
 
